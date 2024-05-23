@@ -1,0 +1,25 @@
+<h1>Votre liste <%= @list.name %></h1>
+<p>Find me in app/views/lists/show.html.erb</p>
+
+<%= simple_form_for [@list, @bookmark] do |f| %>
+  <%= f.association :movie, prompt: "Choose a movie" %>
+  <%= f.input :comment %>
+  <%= f.submit "Add", class: "btn btn-primary" %>
+<% end %>
+
+<% @list.bookmarks.each do |bookmark|
+    movie = bookmark.movie %>
+  <ul>
+    <li>
+      <p><%= movie.title %></p>
+      <p><img src=<%= movie.poster_url %> alt="Poster of #{<%= movie.title %>}"></p>
+      <p><%= movie.overview %></p>
+      <p><%= movie.rating %>/10</p>
+      <p><%= bookmark.comment %></p>
+      <p><%= link_to "Delete",
+      bookmark_path(bookmark),
+      data: {turbo_method: :delete, turbo_confirm: "Are you sure?"}
+    %></p>
+    </li>
+  </ul>
+<% end %>

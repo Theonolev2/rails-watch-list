@@ -15,6 +15,7 @@ require "json"
 # Movie.create(title: "Ocean's Eight", overview: "Debbie Ocean, a criminal mastermind, gathers a crew of female thieves to pull off the heist of the century.", poster_url: "https://image.tmdb.org/t/p/original/MvYpKlpFukTivnlBhizGbkAe3v.jpg", rating: 7.0)
 
 Movie.destroy_all
+List.destroy_all
 
 url = "https://tmdb.lewagon.com/movie/top_rated"
 
@@ -25,7 +26,13 @@ base_url = "http://image.tmdb.org/t/p/"
 poster_size = "w185"
 
 puts "Creating movie list"
-json["results"].each do |movie|
-  Movie.create(title: movie["original_title"], overview: movie["overview"], poster_url: "#{base_url}#{poster_size}#{movie["poster_path"]}", rating: movie["vote_average"])
+list = List.create!(name: "all_movies")
+
+puts "Populating movie list"
+json["results"].each do |movie_json|
+  movie = Movie.create!(title: movie_json["original_title"], overview: movie_json["overview"], poster_url: "#{base_url}#{poster_size}#{movie_json["poster_path"]}", rating: movie_json["vote_average"])
+  puts "creating bookmark for #{movie_json["original_title"]}"
+  Bookmark.create!(list: list, movie: movie, comment: "Bookmark for #{movie_json["original_title"]}")
+  puts "Finished bookmark creation"
 end
 puts "Finished movie list"
